@@ -2,8 +2,9 @@ package com.corteBrabo.barbershopApi.database.model;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
@@ -18,6 +19,4 @@ public class User {
     private String name;
     private ROLE role;
     private Date date;
-
-
 }
