@@ -1,16 +1,22 @@
 package com.corteBrabo.barbershopApi.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.corteBrabo.barbershopApi.database.model.User;
+import com.corteBrabo.barbershopApi.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/user")
 public class UserController {
-    @GetMapping(value="/oi")
-    private String helloWorld(){
-        return "oi";
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/getUser")
+    private User getUserById(@RequestParam int id){
+        return userService.getbyId(id);
     }
 
 
