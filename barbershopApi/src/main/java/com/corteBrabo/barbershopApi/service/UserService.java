@@ -6,6 +6,7 @@ import com.corteBrabo.barbershopApi.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class UserService {
     @Autowired
@@ -14,10 +15,12 @@ public class UserService {
     public void createUser(User user){
         userepo.saveAndFlush(user);
     }
+
     public User getbyId(int id) {
        return userepo.findById(id)
                .orElseThrow(() -> new NotFoundException("Não encontrado "+ id));
     }
+
 
 
 }

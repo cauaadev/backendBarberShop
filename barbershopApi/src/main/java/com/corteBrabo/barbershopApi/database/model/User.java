@@ -3,11 +3,10 @@ package com.corteBrabo.barbershopApi.database.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import java.time.LocalDate;
 
-import java.util.Date;
 @Entity
 @Table(name="user")
 @Getter
@@ -18,5 +17,9 @@ public class User {
     private Long id;
     private String name;
     private ROLE role;
-    private Date date;
+
+    @Column(updatable = false)
+    @CreationTimestamp
+
+    private LocalDate date;
 }
