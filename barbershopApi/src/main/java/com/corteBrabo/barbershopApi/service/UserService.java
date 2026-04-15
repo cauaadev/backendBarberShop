@@ -20,6 +20,12 @@ public class UserService {
        return userepo.findById(id)
                .orElseThrow(() -> new NotFoundException("Não encontrado "+ id));
     }
+    public void deleteById(int id ){
+        if(!userepo.existsById(id)){
+            throw new NotFoundException("Não encontrado "+ id);
+        }
+        userepo.deleteById(id);
+    }
 
 
 
