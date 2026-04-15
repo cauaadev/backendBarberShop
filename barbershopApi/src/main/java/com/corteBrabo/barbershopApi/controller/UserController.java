@@ -22,11 +22,11 @@ public class UserController {
     }
 
     @GetMapping("/getUser")
-    public ResponseEntity<User> getUserById(@RequestParam int id) {
+    public ResponseEntity<User> getUserById(@RequestParam Long id) {
         return ResponseEntity.ok(userService.getbyId(id));
     }
     @DeleteMapping("/deleteUser")
-    public ResponseEntity<String> deleteUser(@RequestParam int id) {
+    public ResponseEntity<String> deleteUser(@RequestParam Long id) {
         userService.deleteById(id);
         return ResponseEntity.ok("User " + id + " excluido com sucesso! ");
     }
