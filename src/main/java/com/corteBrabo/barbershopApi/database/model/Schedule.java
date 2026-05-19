@@ -12,8 +12,8 @@ public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long agendamentoId;
-    private String clientNome;
-    private String barberNome;
+    private String clientName;
+    private String barberName;
 
     @ManyToMany
     @JoinTable(

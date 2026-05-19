@@ -9,10 +9,10 @@ import java.util.List;
 @Getter
 @Setter
 public class ScheduleResponseDTO {
-    private Long id;
-    private String clientNome;
-    private String barberNome;
-    private List<String> serviceNomes;
+    private Long idSchedule;
+    private String clientName;
+    private String barberName;
+    private List<String> serviceNames;
     private String status;
     private LocalDateTime date;
 

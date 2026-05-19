@@ -14,6 +14,7 @@ public class ScheduleService {
 
     @Autowired
     private ScheduleRepository scheduleRepository;
+    @Autowired
     private ScheduleMapper mapper;
 
     public ScheduleResponseDTO createSchedule(ScheduleRequestDTO schReqDTO) {
@@ -40,5 +41,10 @@ public class ScheduleService {
             scheduleRepository.save(sch);
         } else
             throw new NotFoundException("Id para update não encontrado");
+    }
+    public ScheduleResponseDTO getScheduleByBarberName(String barberName){
+        Schedule fullSchedule = scheduleRepository.findByBarberName(barberName);
+        return mapper.toResponseDTO(fullSchedule);
+
     }
 }

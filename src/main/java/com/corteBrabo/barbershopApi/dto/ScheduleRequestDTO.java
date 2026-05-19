@@ -14,10 +14,10 @@ import java.util.List;
 public class ScheduleRequestDTO {
 
     @NotBlank(message = "Nome do cliente é obrigatório")
-    private String clientNome;
+    private String clientName;
 
     @NotBlank(message = "Nome do barbeiro é obrigatório")
-    private String barberNome;
+    private String barberName;
 
     @NotEmpty(message = "Informe ao menos um serviço")
     private List<Long> serviceIds;
