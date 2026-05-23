@@ -3,6 +3,8 @@ package com.corteBrabo.barbershopApi.database.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,13 +18,14 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "client_id", nullable = false)
     private User client;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "schedule_barbers",
-            joinColumns = @JoinColumn(name = "scheduleId"),
+            joinColumns = @JoinColumn(name = "schedule_id"),
             inverseJoinColumns = @JoinColumn(name = "barber_id")
     )
     private List<User> barbers;
@@ -30,11 +33,22 @@ public class Schedule {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "schedule_services",
-            joinColumns = @JoinColumn(name = "scheduleId"),
+            joinColumns = @JoinColumn(name = "schedule_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id")
     )
     private List<Service> services;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    private ScheduleStatus status;
+
+    @Column(nullable = false)
     private LocalDateTime date;
+
+    @Column(updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }

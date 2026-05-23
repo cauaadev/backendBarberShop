@@ -1,6 +1,7 @@
 package com.corteBrabo.barbershopApi.service;
 
 import com.corteBrabo.barbershopApi.database.model.Schedule;
+import com.corteBrabo.barbershopApi.database.model.ScheduleStatus;
 import com.corteBrabo.barbershopApi.database.model.Service;
 import com.corteBrabo.barbershopApi.database.model.User;
 import com.corteBrabo.barbershopApi.database.model.UserRole;
@@ -11,25 +12,37 @@ import com.corteBrabo.barbershopApi.dto.ScheduleRequestDTO;
 import com.corteBrabo.barbershopApi.dto.ScheduleResponseDTO;
 import com.corteBrabo.barbershopApi.exception.NotFoundException;
 import com.corteBrabo.barbershopApi.mapper.ScheduleMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.List;
 
 @org.springframework.stereotype.Service
 public class ScheduleService {
 
-    @Autowired
-    private ScheduleRepository scheduleRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ServiceRepository serviceRepository;
-    @Autowired
-    private ScheduleMapper mapper;
+    private static final List<ScheduleStatus> ACTIVE_STATUSES =
+            List.of(ScheduleStatus.PENDENTE, ScheduleStatus.CONFIRMADO);
+
+    private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
+    private final ServiceRepository serviceRepository;
+    private final ScheduleMapper mapper;
+
+    public ScheduleService(ScheduleRepository scheduleRepository,
+                           UserRepository userRepository,
+                           ServiceRepository serviceRepository,
+                           ScheduleMapper mapper) {
+        this.scheduleRepository = scheduleRepository;
+        this.userRepository = userRepository;
+        this.serviceRepository = serviceRepository;
+        this.mapper = mapper;
+    }
 
     public ScheduleResponseDTO createSchedule(ScheduleRequestDTO dto) {
-        if (scheduleRepository.existsByClient_Id(dto.getClientId())) {
-            throw new IllegalStateException("Cliente já possui um agendamento");
+        if (dto.getClientId() == null) {
+            throw new IllegalStateException("clientId é obrigatório");
+        }
+        if (scheduleRepository.existsByClient_IdAndStatusIn(dto.getClientId(), ACTIVE_STATUSES)) {
+            throw new IllegalStateException("Cliente já possui um agendamento ativo");
         }
 
         Schedule sch = new Schedule();
@@ -37,7 +50,7 @@ public class ScheduleService {
         sch.setBarbers(loadBarbers(dto.getBarberIds()));
         sch.setServices(loadServices(dto.getServiceIds()));
         sch.setDate(dto.getDate());
-        sch.setStatus("PENDENTE");
+        sch.setStatus(ScheduleStatus.PENDENTE);
 
         return mapper.toResponseDTO(scheduleRepository.save(sch));
     }
@@ -49,20 +62,27 @@ public class ScheduleService {
         scheduleRepository.deleteById(id);
     }
 
-    public ScheduleResponseDTO getScheduleById(Long id) {
+    public ScheduleResponseDTO getScheduleById(Long id, User currentUser) {
         Schedule sch = scheduleRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Agendamento não encontrado"));
+        ensureCanView(sch, currentUser);
         return mapper.toResponseDTO(sch);
+    }
+
+    public List<ScheduleResponseDTO> findAllForUser(User currentUser, ScheduleStatus statusFilter) {
+        List<Schedule> base = (currentUser.getRole() == UserRole.ADM)
+                ? (statusFilter == null ? scheduleRepository.findAll() : scheduleRepository.findByStatus(statusFilter))
+                : scheduleRepository.findByBarbers_Id(currentUser.getId());
+
+        return base.stream()
+                .filter(s -> statusFilter == null || s.getStatus() == statusFilter)
+                .map(mapper::toResponseDTO)
+                .toList();
     }
 
     public ScheduleResponseDTO updateSchedule(Long id, ScheduleRequestDTO dto) {
         Schedule sch = scheduleRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Id para update não encontrado"));
-
-        if (!sch.getClient().getId().equals(dto.getClientId())
-                && scheduleRepository.existsByClient_Id(dto.getClientId())) {
-            throw new IllegalStateException("Cliente já possui um agendamento");
-        }
 
         sch.setClient(loadClient(dto.getClientId()));
         sch.setBarbers(loadBarbers(dto.getBarberIds()));
@@ -72,10 +92,27 @@ public class ScheduleService {
         return mapper.toResponseDTO(scheduleRepository.save(sch));
     }
 
-    public List<ScheduleResponseDTO> getSchedulesByBarberName(String barberName) {
-        return scheduleRepository.findByBarbers_Name(barberName).stream()
-                .map(mapper::toResponseDTO)
-                .toList();
+    public ScheduleResponseDTO changeStatus(Long id, ScheduleStatus newStatus, User currentUser) {
+        Schedule sch = scheduleRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Agendamento não encontrado"));
+
+        if (currentUser.getRole() == UserRole.BARBER) {
+            boolean isBarberOfThis = sch.getBarbers().stream()
+                    .anyMatch(b -> b.getId().equals(currentUser.getId()));
+            if (!isBarberOfThis) {
+                throw new AccessDeniedException("Você não é barbeiro deste agendamento");
+            }
+        }
+
+        sch.setStatus(newStatus);
+        return mapper.toResponseDTO(scheduleRepository.save(sch));
+    }
+
+    private void ensureCanView(Schedule sch, User currentUser) {
+        if (currentUser.getRole() == UserRole.ADM) return;
+        if (currentUser.getRole() == UserRole.BARBER
+                && sch.getBarbers().stream().anyMatch(b -> b.getId().equals(currentUser.getId()))) return;
+        throw new AccessDeniedException("Sem permissão para ver este agendamento");
     }
 
     private User loadClient(Long clientId) {
