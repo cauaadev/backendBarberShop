@@ -17,6 +17,9 @@ public class UserService {
     private UserMapper userMapper;
 
     public User createUser(UserRequestDTO dto) {
+        if (userepo.existsByTelefone(dto.getTelefone())) {
+            throw new IllegalStateException("Telefone já cadastrado");
+        }
         User user = userMapper.toEntity(dto);
         return userepo.saveAndFlush(user);
     }

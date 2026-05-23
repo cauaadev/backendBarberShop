@@ -1,6 +1,7 @@
 package com.corteBrabo.barbershopApi.handler;
 
 import com.corteBrabo.barbershopApi.exception.NotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -43,5 +44,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(e.getMessage());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleDataIntegrityViolation(DataIntegrityViolationException e) {
+        String causeMsg = e.getMostSpecificCause().getMessage();
+        if (causeMsg != null && causeMsg.contains("uk_user_telefone")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Telefone já cadastrado");
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Violação de integridade dos dados");
     }
 }
