@@ -10,16 +10,16 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserRequestDTO {
+public class UserUpdateDTO {
 
     @NotBlank(message = "Nome é obrigatório")
-    @Size(min = 2, max = 100, message = "Nome deve ter entre 2 e 100 caracteres")
+    @Size(min = 2, max = 100)
     private String name;
 
     @NotBlank(message = "Telefone é obrigatório")
     @Pattern(regexp = "\\d{10,11}", message = "Telefone deve ter 10 ou 11 dígitos numéricos")
     private String telefone;
 
-    @NotNull(message = "Cargo é obrigatória")
+    @NotNull(message = "Cargo é obrigatório")
     private UserRole role;
 }
