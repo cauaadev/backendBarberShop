@@ -8,8 +8,6 @@ import java.util.List;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
-
     List<Schedule> findByBarbers_Name(String barberName);
-
     boolean existsByClient_Id(Long clientId);
 }

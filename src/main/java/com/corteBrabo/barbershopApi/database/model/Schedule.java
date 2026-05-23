@@ -14,16 +14,15 @@ public class Schedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long agendamentoId;
+    private Long scheduleId;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "client_id", unique = true, nullable = false)
     private User client;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "schedule_barbers",
-            joinColumns = @JoinColumn(name = "schedule_id"),
+            joinColumns = @JoinColumn(name = "scheduleId"),
             inverseJoinColumns = @JoinColumn(name = "barber_id")
     )
     private List<User> barbers;
@@ -31,7 +30,7 @@ public class Schedule {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "schedule_services",
-            joinColumns = @JoinColumn(name = "schedule_id"),
+            joinColumns = @JoinColumn(name = "scheduleId"),
             inverseJoinColumns = @JoinColumn(name = "service_id")
     )
     private List<Service> services;

@@ -13,7 +13,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ScheduleMapper {
 
-    @Mapping(source = "agendamentoId", target = "idSchedule")
     @Mapping(source = "client.name", target = "clientName")
     @Mapping(source = "barbers", target = "barberNames", qualifiedByName = "barbersToNames")
     @Mapping(source = "services", target = "serviceNames", qualifiedByName = "servicesToNames")
