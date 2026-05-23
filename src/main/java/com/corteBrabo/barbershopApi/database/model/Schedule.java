@@ -3,19 +3,32 @@ package com.corteBrabo.barbershopApi.database.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Entity
 @Getter
 @Setter
 public class Schedule {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long agendamentoId;
-    private String clientName;
-    private String barberName;
 
-    @ManyToMany
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long agendamentoId;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "client_id", unique = true, nullable = false)
+    private User client;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "schedule_barbers",
+            joinColumns = @JoinColumn(name = "schedule_id"),
+            inverseJoinColumns = @JoinColumn(name = "barber_id")
+    )
+    private List<User> barbers;
+
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "schedule_services",
             joinColumns = @JoinColumn(name = "schedule_id"),
@@ -26,4 +39,3 @@ public class Schedule {
     private String status;
     private LocalDateTime date;
 }
-

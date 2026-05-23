@@ -37,4 +37,11 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body("Corpo da requisição inválido. Verifique o JSON enviado.");
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleIllegalState(IllegalStateException e) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(e.getMessage());
+    }
 }
