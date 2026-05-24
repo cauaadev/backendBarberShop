@@ -81,7 +81,7 @@ Não é um sistema de auto-agendamento via app — é uma ferramenta de **gestã
   - `401` Unauthorized (credenciais inválidas)
   - `403` Forbidden (sem permissão de role)
   - `409` Conflict (telefone duplicado, regras de negócio)
-
+  - `429` Too Many Requests (EM DESENVOLVIMENTO!) 
 ---
 
 ## Arquitetura
