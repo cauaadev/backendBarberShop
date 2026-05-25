@@ -346,7 +346,7 @@ Content-Type: application/json
 
 O cliente web fica em repositório separado:
 
-**[corte-brabo-frontend](https://github.com/SEU-USUARIO/corte-brabo-frontend)** *(ajustar URL)*
+**[corte-brabo-frontend](https://github.com/SEU-USUARIO/corte-brabo-frontend)** 
 
 Stack: React 18 + Vite + TypeScript + TailwindCSS.
 
