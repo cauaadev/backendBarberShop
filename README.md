@@ -259,7 +259,7 @@ Toda configuração fica em `src/main/resources/application.properties`. Variáv
 # Banco
 spring.datasource.url=jdbc:mysql://localhost:3306/barbershop
 spring.datasource.username=root
-spring.datasource.password=hawaiian11
+spring.datasource.password=${DB_PASSWORD}
 
 # JWT
 app.jwt.secret=<chave secreta de >= 32 bytes>
