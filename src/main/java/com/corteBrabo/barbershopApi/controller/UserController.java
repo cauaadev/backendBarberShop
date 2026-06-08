@@ -42,10 +42,15 @@ public class UserController {
         return ResponseEntity.ok(userService.createStaff(dto));
     }
 
-    @GetMapping
+    @GetMapping("/findAll")
     @PreAuthorize("hasAnyRole('ADM', 'BARBER')")
-    public ResponseEntity<List<UserResponseDTO>> findAll(@RequestParam(required = false) UserRole role) {
-        return ResponseEntity.ok(userService.findAll(role));
+    public ResponseEntity<List<UserResponseDTO>> findAll(){
+        return ResponseEntity.ok(userService.findAll());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserResponseDTO>> findByRole(@RequestParam (required = true) UserRole role){
+        return ResponseEntity.ok(userService.findByRole(role));
     }
 
     @GetMapping("/{id}")

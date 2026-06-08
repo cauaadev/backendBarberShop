@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -55,11 +56,13 @@ public class UserService {
         return userMapper.toResponseDTO(user);
     }
 
-    public List<UserResponseDTO> findAll(UserRole role) {
-        List<User> users = (role == null)
-                ? userRepository.findAll()
-                : userRepository.findByRole(role);
+    public List<UserResponseDTO> findByRole(UserRole role) {
+        List<User> users = userRepository.findByRole(role);
+        System.out.println("usou esse metodo");
         return users.stream().map(userMapper::toResponseDTO).toList();
+    }
+    public List<UserResponseDTO> findAll() {
+        return userRepository.findAll().stream().map(userMapper::toResponseDTO).toList();
     }
 
     public void deleteById(Long id) {
