@@ -8,7 +8,10 @@ import com.corteBrabo.barbershopApi.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
+
+import java.net.ConnectException;
 
 @Service
 public class AuthService {
@@ -30,12 +33,13 @@ public class AuthService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(dto.getTelefone(), dto.getPassword())
             );
-        } catch (Exception e) {
-            throw new BadCredentialsException("Telefone ou senha incorretos");
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException("Telefone ou senha incorretos", e);
         }
 
         User user = userRepository.findByTelefone(dto.getTelefone())
-                .orElseThrow(() -> new BadCredentialsException("Telefone ou senha incorretos"));
+                .orElseThrow(() -> new IllegalStateException(
+                        "Usuário autenticado mas não encontrado: " + dto.getTelefone()));
 
         String token = jwtService.generateToken(user);
         return new LoginResponseDTO(token, user.getId(), user.getName(), user.getRole());
