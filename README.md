@@ -262,20 +262,17 @@ spring.datasource.username=root
 spring.datasource.password=${DB_PASSWORD}
 
 # JWT
-app.jwt.secret=<chave secreta de >= 32 bytes>
+app.jwt.secret=${SECRET_KEY}
 app.jwt.expiration-ms=86400000
 
 # CORS (domínios do frontend autorizados)
 app.cors.allowed-origins=http://localhost:5173,http://localhost:3000
 
-# Bootstrap admin (cria no primeiro boot; remova após criar admins pela UI)
+# Bootstrap admin
 app.admin.bootstrap-telefone=11000000000
 app.admin.bootstrap-password=admin123
 app.admin.bootstrap-name=Admin
 ```
-
-> **Atenção:** em produção, mova segredos pra variáveis de ambiente.
-
 ---
 
 ## Endpoints da API
@@ -369,7 +366,7 @@ Próximas melhorias planejadas:
 - [ ] Refresh tokens (hoje token expira em 24h)
 - [ ] Validação de conflito de horário (impedir 2 agendamentos pro mesmo barbeiro no mesmo horário)
 - [ ] Campo de duração nos serviços (pra calcular conflito de horário automaticamente)
-- [ ] Paginação nas listagens
+- [ ] Paginação nas listagens 
 - [ ] Histórico/auditoria de mudanças de status
 - [ ] Notificação pro cliente (SMS/WhatsApp) na confirmação
 - [ ] Relatórios financeiros (faturamento por barbeiro / por período)
