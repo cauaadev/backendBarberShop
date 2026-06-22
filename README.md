@@ -25,19 +25,6 @@ Sistema completo de gestão para barbearia, com painel web para funcionários ca
 
 ---
 
-## Visão geral
-
-O Corte Brabo nasceu de uma necessidade real: dar pro pessoal da barbearia uma ferramenta simples pra:
-
-- Cadastrar cliente em 5 segundos no balcão (só nome e telefone, sem senha — cliente não loga)
-- Marcar agendamento amarrando cliente + barbeiro(s) + serviço(s) + horário
-- Acompanhar a fila do dia com status (pendente → confirmado → concluído / cancelado)
-- Manter a tabela de preços atualizada e visível
-
-Não é um sistema de auto-agendamento via app — é uma ferramenta de **gestão interna**. Só funcionário loga, cliente é apenas um cadastro.
-
----
-
 ## Stack
 
 | Camada | Tecnologia |
