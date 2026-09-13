@@ -38,18 +38,18 @@ public class ScheduleService {
     }
 
     public ScheduleResponseDTO createSchedule(ScheduleRequestDTO dto) {
-        if (dto.getClientId() == null) {
+        if (dto.clientId() == null) {
             throw new IllegalStateException("clientId é obrigatório");
         }
-        if (scheduleRepository.existsByClient_IdAndStatusIn(dto.getClientId(), ACTIVE_STATUSES)) {
+        if (scheduleRepository.existsByClient_IdAndStatusIn(dto.clientId(), ACTIVE_STATUSES)) {
             throw new IllegalStateException("Cliente já possui um agendamento ativo");
         }
 
         Schedule sch = new Schedule();
-        sch.setClient(loadClient(dto.getClientId()));
-        sch.setBarbers(loadBarbers(dto.getBarberIds()));
-        sch.setServices(loadServices(dto.getServiceIds()));
-        sch.setDate(dto.getDate());
+        sch.setClient(loadClient(dto.clientId()));
+        sch.setBarbers(loadBarbers(dto.barberIds()));
+        sch.setServices(loadServices(dto.serviceIds()));
+        sch.setDate(dto.date());
         sch.setStatus(ScheduleStatus.PENDENTE);
 
         return mapper.toResponseDTO(scheduleRepository.save(sch));
@@ -84,10 +84,10 @@ public class ScheduleService {
         Schedule sch = scheduleRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Id para update não encontrado"));
 
-        sch.setClient(loadClient(dto.getClientId()));
-        sch.setBarbers(loadBarbers(dto.getBarberIds()));
-        sch.setServices(loadServices(dto.getServiceIds()));
-        sch.setDate(dto.getDate());
+        sch.setClient(loadClient(dto.clientId()));
+        sch.setBarbers(loadBarbers(dto.barberIds()));
+        sch.setServices(loadServices(dto.serviceIds()));
+        sch.setDate(dto.date());
 
         return mapper.toResponseDTO(scheduleRepository.save(sch));
     }

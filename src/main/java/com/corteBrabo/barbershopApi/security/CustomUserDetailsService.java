@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByTelefone(telefone)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + telefone));
 
-        if (user.getRole() == UserRole.CLIENT) {
+        if (user.getRole().equals(UserRole.CLIENT)) {
             throw new UsernameNotFoundException("Cliente não tem acesso ao sistema");
         }
         return user;
