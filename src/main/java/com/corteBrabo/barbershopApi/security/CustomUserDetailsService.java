@@ -21,7 +21,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String telefone) throws UsernameNotFoundException {
         User user = userRepository.findByTelefone(telefone)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + telefone));
-
         if (user.getRole().equals(UserRole.CLIENT)) {
             throw new UsernameNotFoundException("Cliente não tem acesso ao sistema");
         }
