@@ -28,25 +28,25 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
     public UserResponseDTO createClient(ClientCreateDTO dto) {
-        if (userRepository.existsByTelefone(dto.getTelefone())) {
+        if (userRepository.existsByTelefone(dto.telefone())) {
             throw new IllegalStateException("Telefone já cadastrado");
         }
         User user = new User();
-        user.setName(dto.getName());
-        user.setTelefone(dto.getTelefone());
+        user.setName(dto.name());
+        user.setTelefone(dto.telefone());
         user.setRole(UserRole.CLIENT);
         return userMapper.toResponseDTO(userRepository.save(user));
     }
 
     public UserResponseDTO createStaff(StaffCreateDTO dto) {
-        if (userRepository.existsByTelefone(dto.getTelefone())) {
+        if (userRepository.existsByTelefone(dto.telefone())) {
             throw new IllegalStateException("Telefone já cadastrado");
         }
         User user = new User();
-        user.setName(dto.getName());
-        user.setTelefone(dto.getTelefone());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setRole(dto.getRole());
+        user.setName(dto.name());
+        user.setTelefone(dto.telefone());
+        user.setPassword(passwordEncoder.encode(dto.password()));
+        user.setRole(dto.role());
         return userMapper.toResponseDTO(userRepository.save(user));
     }
 
@@ -76,14 +76,14 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado: " + id));
 
-        if (!user.getTelefone().equals(dto.getTelefone())
-                && userRepository.existsByTelefone(dto.getTelefone())) {
+        if (!user.getTelefone().equals(dto.telefone())
+                && userRepository.existsByTelefone(dto.telefone())) {
             throw new IllegalStateException("Telefone já cadastrado");
         }
 
-        user.setName(dto.getName());
-        user.setTelefone(dto.getTelefone());
-        user.setRole(dto.getRole());
+        user.setName(dto.name());
+        user.setTelefone(dto.telefone());
+        user.setRole(dto.role());
 
         return userMapper.toResponseDTO(userRepository.save(user));
     }

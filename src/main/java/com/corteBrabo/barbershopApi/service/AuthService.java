@@ -31,15 +31,15 @@ public class AuthService {
     public LoginResponseDTO login(LoginRequestDTO dto) {
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(dto.getTelefone(), dto.getPassword())
+                    new UsernamePasswordAuthenticationToken(dto.telefone(), dto.password())
             );
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Telefone ou senha incorretos", e);
         }
 
-        User user = userRepository.findByTelefone(dto.getTelefone())
+        User user = userRepository.findByTelefone(dto.telefone())
                 .orElseThrow(() -> new IllegalStateException(
-                        "Usuário autenticado mas não encontrado: " + dto.getTelefone()));
+                        "Usuário autenticado mas não encontrado: " + dto.telefone()));
 
         String token = jwtService.generateToken(user);
         return new LoginResponseDTO(token, user.getId(), user.getName(), user.getRole());
