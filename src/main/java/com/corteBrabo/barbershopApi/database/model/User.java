@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -24,16 +25,33 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "business_id", nullable = false)
+    private Business business;
+
     private String name;
 
-    @Column(unique = true)
     private String telefone;
+
+    @Column(unique = true)
+    private String email;
 
     @Column(nullable = true)
     private String password;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @Column(nullable = false)
+    private boolean bookable;
+
+    @Column(nullable = false)
+    private boolean active = true;
+
+    private BigDecimal commissionPercent;
+
+    @Column(length = 500)
+    private String notes;
 
     @Column(updatable = false)
     @CreationTimestamp
@@ -42,6 +60,9 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    public Long getBusinessId() {
+        return business.getId();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -50,7 +71,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return telefone;
+        return email;
     }
 
     @Override
@@ -70,6 +91,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return active;
     }
 }

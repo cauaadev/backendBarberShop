@@ -1,19 +1,22 @@
 package com.corteBrabo.barbershopApi.config;
 
-import com.corteBrabo.barbershopApi.database.model.User;
-import com.corteBrabo.barbershopApi.database.model.UserRole;
+import com.corteBrabo.barbershopApi.database.model.BusinessSegment;
 import com.corteBrabo.barbershopApi.database.repository.UserRepository;
+import com.corteBrabo.barbershopApi.dto.SignupRequestDTO;
+import com.corteBrabo.barbershopApi.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AdminSeeder implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(AdminSeeder.class);
+
+    @Value("${app.admin.bootstrap-email:}")
+    private String email;
 
     @Value("${app.admin.bootstrap-telefone:}")
     private String telefone;
@@ -24,31 +27,29 @@ public class AdminSeeder implements CommandLineRunner {
     @Value("${app.admin.bootstrap-name:Admin}")
     private String name;
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    @Value("${app.admin.bootstrap-business:Minha Empresa}")
+    private String businessName;
 
-    public AdminSeeder(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    private final UserRepository userRepository;
+    private final AuthService authService;
+
+    public AdminSeeder(UserRepository userRepository, AuthService authService) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.authService = authService;
     }
 
     @Override
     public void run(String... args) {
-        if (telefone == null || telefone.isBlank() || password == null || password.isBlank()) {
+        if (email == null || email.isBlank() || password == null || password.isBlank()
+                || telefone == null || telefone.isBlank()) {
             return;
         }
 
-        if (userRepository.existsByTelefone(telefone)) {
-            log.info("Bootstrap admin: telefone {} já existe, pulando.", telefone);
+        if (userRepository.existsByEmailIgnoreCase(email)) {
+            log.info("Bootstrap admin: e-mail {} já existe, pulando.", email);
             return;
         }
 
-        User admin = new User();
-        admin.setName(name);
-        admin.setTelefone(telefone);
-        admin.setPassword(passwordEncoder.encode(password));
-        admin.setRole(UserRole.ADM);
-        userRepository.save(admin);
-
+        authService.signup(new SignupRequestDTO(businessName, BusinessSegment.OUTRO, name, email, telefone, password));
     }
 }
