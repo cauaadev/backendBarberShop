@@ -37,7 +37,7 @@ public class Business {
     private String description;
 
     @Column(nullable = false, length = 9)
-    private String brandColor = "#6D5DF6";
+    private String brandColor = "#111111";
 
     @Column(nullable = false)
     private boolean bookingEnabled = true;
