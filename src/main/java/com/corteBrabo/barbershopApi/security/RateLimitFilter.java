@@ -23,7 +23,7 @@ public class  RateLimitFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !request.getRequestURI().equals("/auth/login");
+        return bucketOf(request) == null;
     }
 
     @Override
@@ -31,18 +31,28 @@ public class  RateLimitFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String ip = request.getRemoteAddr();
-        SlidingWindowRateLimiter limiter = registry.getRateLimiter(ip);
+        String bucket = bucketOf(request);
+        int limit = bucket.equals("booking") ? 10 : 5;
+        SlidingWindowRateLimiter limiter = registry.getRateLimiter(request.getRemoteAddr(), bucket, limit);
 
         if (limiter.allowRequest()) {
             filterChain.doFilter(request, response);
         } else {
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             response.setHeader("Retry-After", "60");
-            response.setContentType("application/json");
+            response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(
-                "{\"error\":\"Muitas tentativas de login. Tente novamente em 60 segundos.\"}"
+                "{\"message\":\"Muitas tentativas. Tente novamente em 60 segundos.\"}"
             );
         }
+    }
+
+    private static String bucketOf(HttpServletRequest request) {
+        if (!"POST".equals(request.getMethod())) return null;
+        String uri = request.getRequestURI();
+        if (uri.equals("/auth/login")) return "login";
+        if (uri.equals("/auth/signup")) return "signup";
+        if (uri.startsWith("/public/") && uri.endsWith("/bookings")) return "booking";
+        return null;
     }
 }

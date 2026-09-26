@@ -11,7 +11,7 @@ public class RateLimiterRegistry {
 
     private final Map<String, SlidingWindowRateLimiter> limiters = new ConcurrentHashMap<>();
 
-    public SlidingWindowRateLimiter getRateLimiter(String ip) {
-        return limiters.computeIfAbsent(ip, key -> new SlidingWindowRateLimiter(5, 60_000));
+    public SlidingWindowRateLimiter getRateLimiter(String ip, String bucket, int limit) {
+        return limiters.computeIfAbsent(bucket + ":" + ip, key -> new SlidingWindowRateLimiter(limit, 60_000));
     }
 }

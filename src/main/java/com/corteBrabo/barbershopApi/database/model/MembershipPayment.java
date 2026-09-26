@@ -2,34 +2,31 @@ package com.corteBrabo.barbershopApi.database.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
-@NoArgsConstructor
+@Table(name = "membership_payment")
 @Getter
 @Setter
-public class Service {
+public class MembershipPayment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long serviceId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "business_id", nullable = false)
-    private Business business;
-
-    private String serviceName;
+    @JoinColumn(name = "membership_id", nullable = false)
+    private Membership membership;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
+    private BigDecimal amount;
+
+    @Column(nullable = false, length = 20)
+    private String method;
 
     @Column(nullable = false)
-    private int durationMinutes = 30;
-
-    private String description;
-
-    @Column(nullable = false)
-    private boolean active = true;
+    private LocalDateTime paidAt;
 }
